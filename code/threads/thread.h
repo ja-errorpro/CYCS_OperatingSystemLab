@@ -80,13 +80,36 @@ class Thread {
     // THEY MUST be in this position for SWITCH to work.
     int *stackTop;                         // the current stack pointer
     void *machineState[MachineStateSize];  // all registers except for stackTop
-
+    int priority, burst_time, start_time;
    public:
     Thread(char *debugName, int threadID);  // initialize a Thread
     ~Thread();                              // deallocate a Thread
                                             // NOTE -- thread being deleted
                                             // must not be running when delete
                                             // is called
+
+    /* Lab2 - Scheduling - Start */
+
+    int getBurstTime() {
+        return burst_time;
+    }
+    int getPriority() {
+        return priority;
+    }
+    int getStartTime() {
+        return start_time;
+    }
+    void setBurstTime(int x) {
+        burst_time = x;
+    }
+    void setStartTime(int x) {
+        start_time = x;
+    }
+    void setPriority(int x) {
+        priority = x;
+    }
+
+    /* Lab2 - Scheduling - End */
 
     // basic thread operations
 
@@ -114,6 +137,13 @@ class Thread {
     int *stack;           // Bottom of the stack
                           // NULL if this is the main thread
                           // (If NULL, don't deallocate stack)
+    
+    /* Lab2 - Scheduling - Start */
+    
+    // Hint : Create variable at here.
+
+    /* Lab2 - Scheduling - End */
+
     ThreadStatus status;  // ready, running or blocked
     char *name;
     int ID;

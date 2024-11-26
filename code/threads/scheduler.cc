@@ -167,3 +167,89 @@ void Scheduler::Print() {
     cout << "Ready list contents:\n";
     readyList->Apply(ThreadPrint);
 }
+
+//----------------------------------------------------------------------
+// CompareMethod
+//----------------------------------------------------------------------
+
+int IDCompare(Thread *x, Thread *y) {
+    if(x->getID() < y->getID()){
+        return -1;
+    }
+    else return 1;
+}
+
+int PriorityCompare(Thread *x, Thread *y) {
+    if(x->getStartTime() < y->getStartTime()){
+        return -1;
+    }
+    else if(x->getStartTime() == y->getStartTime()){
+        if(x->getPriority() < y->getPriority()){
+            return -1;
+        }
+        else if(x->getPriority() == y->getPriority()){
+            return IDCompare(x, y);
+        }
+        else return 1;
+    }
+    else return 1;
+}
+
+int SJFCompare(Thread *x, Thread *y) {
+    if(x->getStartTime() < y->getStartTime()){
+        return -1;
+    }
+    else if(x->getStartTime() == y->getStartTime()){
+        if(x->getBurstTime() < y->getBurstTime()){
+            return -1;
+        }
+        else if(x->getBurstTime() == y->getBurstTime()){
+            return IDCompare(x, y);
+        }
+        else return 1;
+    }
+    else return 1;
+}
+
+int FCFSCompare(Thread *x, Thread *y) {
+    if(x->getStartTime() < y->getStartTime()){
+        return -1;
+    }
+    else if(x->getStartTime() == y->getStartTime()){
+        return IDCompare(x, y);
+    }
+    else return 1;
+}
+
+
+//----------------------------------------------------------------------
+// Scheduler::Scheduler(SchedulerType type)
+//----------------------------------------------------------------------
+
+Scheduler::Scheduler(SchedulerType type) {
+        schedulerType = type;
+        switch(type)
+        {
+            // This is an example "case"
+            case RR:
+                readyList = new List<Thread *> ;
+                break;
+
+            // This is a "case" framework
+            // More hint : You need to write your thread compare method (Please refer to the PowerPoint).
+            //             For example, if you write a compare method named "RRCompare",
+            //             Line 227 (readyList = new SortedList<Thread *>(/*Your Compare Method*/);) will become :
+            //             readyList = new SortedList<Thread *>( RRCompare );
+
+            case Priority /* scheduler type */ :
+                readyList = new SortedList<Thread *>( PriorityCompare );
+                break;
+            case SJF:
+                readyList = new SortedList<Thread *>( SJFCompare );
+                break;
+            case FCFS:
+                readyList = new SortedList<Thread *>( FCFSCompare );
+                break;
+        }
+        toBeDestroyed = NULL;
+} // Scheduler()

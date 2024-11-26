@@ -130,59 +130,6 @@ void ExceptionHandler(ExceptionType which) {
                     cout << "return value:" << val << endl;
                     kernel->currentThread->Finish();
                     break;
-                case SC_Open:
-                    val = kernel->machine->ReadRegister(4);
-                    {
-                        char *filename = &(kernel->machine->mainMemory[val]);
-                        status = SysOpen(filename);
-                        kernel->machine->WriteRegister(2, (int)status);
-                    }
-                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
-                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
-                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
-                    return;
-                    ASSERTNOTREACHED();
-                    break;
-                case SC_Write:
-                    val = kernel->machine->ReadRegister(4);
-                    numChar = kernel->machine->ReadRegister(5);
-                    fileID = kernel->machine->ReadRegister(6);
-                    {
-                        char *buffer = &(kernel->machine->mainMemory[val]);
-                        status = SysWrite(buffer, numChar, fileID);
-                        kernel->machine->WriteRegister(2, (int)status);
-                    }
-                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
-                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
-                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
-                    return;
-                    ASSERTNOTREACHED();
-                    break;
-                case SC_Read:
-                    val = kernel->machine->ReadRegister(4);
-                    numChar = kernel->machine->ReadRegister(5);
-                    fileID = kernel->machine->ReadRegister(6);
-                    {
-                        char *buffer = &(kernel->machine->mainMemory[val]);
-                        status = SysRead(buffer, numChar, fileID);
-                        kernel->machine->WriteRegister(2, (int)status);
-                    }
-                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
-                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
-                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
-                    return;
-                    ASSERTNOTREACHED();
-                    break;
-                case SC_Close:
-                    fileID = kernel->machine->ReadRegister(4);
-                    status = SysClose(fileID);
-                    kernel->machine->WriteRegister(2, (int)status);
-                    kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
-                    kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
-                    kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
-                    return;
-                    ASSERTNOTREACHED();
-                    break;
                 default:
                     cerr << "Unexpected system call " << type << "\n";
                     break;

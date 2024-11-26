@@ -17,11 +17,29 @@
 // the data structures and operations needed to keep track of which
 // thread is running, and which threads are ready but not running.
 
+/* Lab2 - Scheduling - Start */
+
+enum SchedulerType {
+        RR,
+        Priority,
+        SJF,
+        FCFS
+} ;
+
+/* Lab2 - Scheduling - End */
+
 class Scheduler {
    public:
     Scheduler();   // Initialize list of ready threads
     ~Scheduler();  // De-allocate ready list
+    
+    /* Lab2 - Scheduling - Start */
+    
+    SchedulerType schedulerType ;
+    Scheduler(SchedulerType type) ;
 
+    /* Lab2 - Scheduling - End */
+    
     void ReadyToRun(Thread* thread);
     // Thread can be dispatched.
     Thread* FindNextToRun();  // Dequeue first thread on the ready

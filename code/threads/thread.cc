@@ -394,17 +394,38 @@ SimpleThread(int which) {
 }
 
 //----------------------------------------------------------------------
+// SimulateTimeThread
+//----------------------------------------------------------------------
+
+static void SimulateTimeThread() {
+    Thread *t = kernel->currentThread ;
+    while ( t->getBurstTime() > 0 ) {
+        t->setBurstTime( t->getBurstTime() - 1 ) ;
+        cout << "*** thread " << t->getName() << ": remaining time " << t->getBurstTime() << endl ;
+        kernel->interrupt->OneTick() ;
+    } // while()
+} // SimulateTimeThread()
+
+
+//----------------------------------------------------------------------
 // Thread::SelfTest
-// 	Set up a ping-pong between two threads, by forking a thread
-//	to call SimpleThread, and then calling SimpleThread ourselves.
 //----------------------------------------------------------------------
 
 void Thread::SelfTest() {
-    DEBUG(dbgThread, "Entering Thread::SelfTest");
+    DEBUG(dbgThread, "Entering Thread::SelfTest") ;
+    const int thread_num = 6 ;
+    char *name[thread_num] = {"A", "B", "C", "D", "E", "F"} ;
+    int priority[thread_num] = {7, 2, 4, 4, 6, 3} ;
+    int burst[thread_num] = {3, 2, 4, 4, 5, 7} ;
+    int start[thread_num] = {1, 1, 7, 7, 15, 15} ;
 
-    Thread *t = new Thread("forked thread", 1);
-
-    t->Fork((VoidFunctionPtr)SimpleThread, (void *)1);
-    kernel->currentThread->Yield();
-    SimpleThread(0);
-}
+    Thread *t ;
+    int i = 0 ;
+    for ( i = 0 ; i < thread_num ; i ++ ) {
+        t = new Thread( name[i], i ) ;
+        t->setPriority(priority[i]) ;
+        t->setBurstTime(burst[i]) ;
+        t->setStartTime(start[i]) ;
+        t->Fork((VoidFunctionPtr) SimulateTimeThread, (void *)NULL) ;
+    } // for()
+} // SelfTest()
